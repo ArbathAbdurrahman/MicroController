@@ -9,6 +9,11 @@
 #define DHTPIN 2
 #define DHTTYPE DHT22
 DHT dht(DHTPIN, DHTTYPE);
+unsigned long lastSensorRead = 0;
+unsigned long lastLCD = 0;
+
+float lastTemp = 0;
+float lastHum  = 0;
 
 // ================= AC DIMMER =================
 #define ZC_PIN 14
@@ -169,30 +174,35 @@ void loop() {
 
   // ================== BACA SENSOR / PID setiap 2 detik ==================
   if (now - lastSensorRead >= 2000) {
-    lastSensorRead = now;
+      lastSensorRead = now;
 
-    float h = dht.readHumidity();
-    float t = dht.readTemperature();
-    if (!isnan(t)) {
-      float error = targetTemp - t;
-      dimmerPower = constrain(error * Kp, 0, 100);
-      dimmer.setPower(dimmerPower);
-    }
+      float h = dht.readHumidity();
+      float t = dht.readTemperature();
+
+      if (!isnan(t)) {
+          lastTemp = t;
+          lastHum = h;
+
+          float error = targetTemp - t;
+          dimmerPower = constrain(error * Kp, 0, 100);
+          dimmer.setPower(dimmerPower);
+      }
   }
 
-  // ================== LCD Update setiap 1 detik ==================
-  if (now - lastLCD >= 1000) {
-    lastLCD = now;
+  // ================== UPDATE LCD setiap 2 detik ==================
+  if (now - lastLCD >= 2000) {
+      lastLCD = now;
 
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.print("Suhu:");
-    lcd.print(dimmerPower);
+      lcd.setCursor(0, 0);
+      lcd.print("Suhu:");
+      lcd.print(lastTemp, 1);
+      lcd.write(223);
+      lcd.print("C   ");   // hapus karakter sisa
 
-    lcd.setCursor(0,1);
-    lcd.print("PWR:");
-    lcd.print(dimmerPower);
-    lcd.print("%");
+      lcd.setCursor(0, 1);
+      lcd.print("Hum :");
+      lcd.print(lastHum, 1);
+      lcd.print("%   ");
   }
 
   // ================= PUBLISH STATUS setiap 5 detik ==================
