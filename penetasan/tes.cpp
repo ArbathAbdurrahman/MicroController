@@ -6,8 +6,8 @@
 #include <EEPROM.h>
 
 // ================= DHT =================
-#define DHTPIN 2
-#define DHTTYPE DHT22
+#define DHTPIN 4
+#define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
 
 
@@ -15,12 +15,12 @@ float lastTemp = 0;
 float lastHum  = 0;
 
 // ================= AC DIMMER =================
-#define ZC_PIN 14
-#define DIM_PIN 12
+#define ZC_PIN 32
+#define DIM_PIN 33
 dimmerLamp dimmer(DIM_PIN, ZC_PIN);
 
 // ============= RELAY TIMER =============
-#define RELAY_PIN 4
+#define RELAY_PIN 2
 bool relayTimerEnabled = false;
 unsigned long relayOnDuration = 0;
 unsigned long relayInterval = 0;
@@ -35,13 +35,13 @@ LiquidCrystal_I2C lcd(0x27 , 16, 2);
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-const char* ssid = "Ageladanios";
-const char* password = "password";
+const char* ssid = "akmal testing";
+const char* password = "akmalsani";
 
 const char* mqtt_server = "mqtt.teknohole.com";
-const int   mqtt_port   = 1883;
-const char* mqtt_user   = "user";
-const char* mqtt_pass   = "password";
+const int   mqtt_port   = 1884;
+const char* mqtt_user   = "kartel";
+const char* mqtt_pass   = "kartel123";
 
 const char* topic_status  = "topic/penetasan/status";
 const char* topic_command = "topic/penetasan/command";
@@ -158,14 +158,14 @@ void setup() {
   pinMode(RELAY_PIN, OUTPUT);
   digitalWrite(RELAY_PIN, LOW);
 
-  WiFi.begin(ssid, password);
+  WiFi.begin(ssid,password);
   client.setServer(mqtt_server, mqtt_port);
   client.setCallback(callback);
 }
 
 // ================= MAIN LOOP =================
 void loop() {
-  handleWiFi();
+  
   handleMQTT();
   client.loop();
 
@@ -238,6 +238,7 @@ void loop() {
       lastRelayRun = now;
     }
   }
+  delay(500);
 }
 
 /* ====== COMMAND ====== 

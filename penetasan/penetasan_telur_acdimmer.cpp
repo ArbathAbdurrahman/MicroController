@@ -1,4 +1,4 @@
-#include <ESP8266WiFi.h>
+#include <WiFi.h>
 #include <PubSubClient.h>
 #include <DHT.h>
 #include <LiquidCrystal_I2C.h>
@@ -6,22 +6,21 @@
 #include <EEPROM.h>
 
 // ================= DHT =================
-#define DHTPIN 2
-#define DHTTYPE DHT22
+#define DHTPIN 4
+#define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
-unsigned long lastSensorRead = 0;
-unsigned long lastLCD = 0;
+
 
 float lastTemp = 0;
 float lastHum  = 0;
 
 // ================= AC DIMMER =================
-#define ZC_PIN 14
-#define DIM_PIN 12
+#define ZC_PIN 32
+#define DIM_PIN 33
 dimmerLamp dimmer(DIM_PIN, ZC_PIN);
 
 // ============= RELAY TIMER =============
-#define RELAY_PIN 4
+#define RELAY_PIN 2
 bool relayTimerEnabled = false;
 unsigned long relayOnDuration = 0;
 unsigned long relayInterval = 0;
